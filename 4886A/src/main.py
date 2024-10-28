@@ -108,9 +108,12 @@ def turnRight(amount, speed):
 def pre_auton():
     brain.screen.print("Hello!")
 def autonomous():
-  driveDist(20, 65)
+  driveDist(5, 65)
   rotateRight(180, 70)
+  clamp.set(extended)
+  driveDist(0.5, 10)
   intake.spin_for(FORWARD, 15, TURNS, 100, RPM)
+  clamp.set(retracted)
 
 
 # Main Controller loop to set motors to controller axis postiions
