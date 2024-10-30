@@ -33,6 +33,11 @@ right_motor_2 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False) # type: ignor
 intake = Motor(Ports.PORT15, GearSetting.RATIO_18_1, False) # type: ignore
 in2 = Motor(Ports.PORT13, GearSetting.RATIO_18_1, True) # type: ignore
 clamp = DigitalOut(brain.three_wire_port.a) # type: ignore
+eyeball__BRING = Signature(1, -14587, -14303, -14445,3427, 3831, 3629,2.5, 0)
+eyeball__RRING = Signature(2, 14729, 15239, 14984,685, 1141, 913,2.5, 0)
+eyeball__MOGO = Signature(3, -2545, -2221, -2383,-10199, -9879, -10039,2.5, 0)
+eyeball = Vision(Ports.PORT13, 50, eyeball__BRING, eyeball__RRING, eyeball__MOGO)
+
 
 # Constants
 
@@ -108,9 +113,12 @@ def turnRight(amount, speed):
 def pre_auton():
     brain.screen.print("Hello!")
 def autonomous():
-  driveDist(20, 65)
+  driveDist(5, 65)
   rotateRight(180, 70)
+  clamp.set(extended)
+  driveDist(0.5, 10)
   intake.spin_for(FORWARD, 15, TURNS, 100, RPM)
+  clamp.set(retracted)
 
 
 # Main Controller loop to set motors to controller axis postiions
