@@ -56,9 +56,9 @@ def driveDist(amount, speed):
   left_motor_2.set_velocity(speed, PERCENT) 
   right_motor_2.set_velocity(speed, PERCENT) 
   left_motor.spin_for(FORWARD, amount * inches2Degrees, DEGREES, False) 
-  right_motor.spin_for(FORWARD, amount * inches2Degrees, DEGREES) 
+  right_motor.spin_for(FORWARD, amount * inches2Degrees, DEGREES, True) 
   left_motor_2.spin_for(FORWARD, amount * inches2Degrees, DEGREES, False) 
-  right_motor_2.spin_for(FORWARD, amount * inches2Degrees, DEGREES) 
+  right_motor_2.spin_for(FORWARD, amount * inches2Degrees, DEGREES, True) 
 
 
 def rotateLeft(amount, speed):
@@ -69,8 +69,7 @@ def rotateLeft(amount, speed):
   right_motor_2.set_velocity(speed, PERCENT) 
   
   #  do not move right_motor
-  right_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees, DEGREES, False) 
-  left_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees  * -1, DEGREES) 
+  left_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees  * -1, DEGREES, False)
 
 
 def rotateRight(amount, speed):
@@ -81,7 +80,6 @@ def rotateRight(amount, speed):
   
   #  do not move left_motor
   right_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees * -1, DEGREES, False) 
-  left_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees, DEGREES) 
 
 
 def turnLeft(amount, speed):
@@ -92,7 +90,7 @@ def turnLeft(amount, speed):
   right_motor_2.set_velocity(speed, PERCENT) 
   
   #  do not move left_motor
-  right_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees, DEGREES) 
+  right_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees, DEGREES, False) 
 
 def turnRight(amount, speed):
   brain.screen.print("\n Running auton.. Currently on function rotate with args " + amount.str() + speed.str())
@@ -101,16 +99,26 @@ def turnRight(amount, speed):
   left_motor_2.set_velocity(speed, PERCENT) 
   right_motor_2.set_velocity(speed, PERCENT)
   #  do not move right_motor
-  left_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees, DEGREES) 
+  left_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees, DEGREES, False) 
 
 # Begin project code
 
 def pre_auton():
     brain.screen.print("Hello!")
 def autonomous():
+<<<<<<< Updated upstream
   driveDist(20, 65)
   rotateRight(180, 70)
   intake.spin_for(FORWARD, 15, TURNS, 100, RPM)
+=======
+
+  driveDist(11, 40)
+  rotateRight(180, 70)
+  brain.screen.print("Skibidi")
+  clamp.set(extended)
+  intake.spin_for(FORWARD, 5, TURNS, 100, RPM)
+  clamp.set(retracted)
+>>>>>>> Stashed changes
 
 
 # Main Controller loop to set motors to controller axis postiions
@@ -149,11 +157,11 @@ def user_control():
 
         # Run intake (forward)
         if controller_1.buttonA.pressing():
-            intake.set_velocity(85, RPM)
+            intake.set_velocity(75, RPM)
             in2.set_velocity(90, RPM)
         # Extake????
         elif controller_1.buttonB.pressing():
-            intake.set_velocity(-85, RPM)
+            intake.set_velocity(-75, RPM)
             in2.set_velocity(-90, RPM)
         # Cease
         else:
