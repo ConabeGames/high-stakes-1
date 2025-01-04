@@ -2,10 +2,9 @@
 #                                                                               #                                                                          
 #    Project:        4886A                                                      #
 #    Module:         main.py                                                    #
-#    Author:         Connor Abraham                                             #
+#    Author:         Connor Abraham & Ira Corbett                               #
 #    Created:        September 3rd 2024                                         #
-#    Description:    This example will use Controller button events to          # 
-#                    control the V5 Clawbot arm and claw                        #
+#    Description:    4886A code                                                 #       
 #                                                                               #                                                                          
 #    Configuration:  V5 Clawbot (Individual Motors)                             #
 #                    Controller                                                 #
@@ -18,22 +17,23 @@
 
 # Library imports
 from vex import * # type: ignore
+ 
+
 
 # Brain should be defined by default
 brain=Brain() # type: ignore
 
-# GitHub test
 
 # Robot configuration code
 controller_1 = Controller(PRIMARY) # type: ignore
-left_motor = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # type: ignore
+left_motor = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True) # type: ignore
 left_motor_2 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # type: ignore
 right_motor = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False) # type: ignore
-right_motor_2 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False) # type: ignore
-intake = Motor(Ports.PORT15, GearSetting.RATIO_18_1, False) # type: ignore
+right_motor_2 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False) # type: ignore 
+intake = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False) # type: ignore
 in2 = Motor(Ports.PORT13, GearSetting.RATIO_18_1, True) # type: ignore
 clamp = DigitalOut(brain.three_wire_port.a) # type: ignore
-
+#corner_sweeper = DigitalOut(brain.three_wire_port.b)
 # Constants
 
 PI = 3.14159265
@@ -47,6 +47,7 @@ turnCirc = wheelWidth * (2*PI)
 inches2Degrees = ((360/wheelCirc)*(wheelGearT/motorGearT))
 extended = True
 retracted = False
+clampbutton = 0
 
 # Auton steps
 
@@ -55,10 +56,11 @@ def driveDist(amount, speed):
   right_motor.set_velocity(speed, PERCENT) 
   left_motor_2.set_velocity(speed, PERCENT) 
   right_motor_2.set_velocity(speed, PERCENT) 
-  left_motor.spin_for(FORWARD, amount * inches2Degrees, DEGREES, False) 
-  right_motor.spin_for(FORWARD, amount * inches2Degrees, DEGREES, True) 
-  left_motor_2.spin_for(FORWARD, amount * inches2Degrees, DEGREES, False) 
-  right_motor_2.spin_for(FORWARD, amount * inches2Degrees, DEGREES, True) 
+  amount *= inches2Degrees
+  left_motor.spin_for(FORWARD, amount, DEGREES, wait=False) #false
+  right_motor.spin_for(FORWARD, amount, DEGREES, wait=False) #false
+  left_motor_2.spin_for(FORWARD, amount, DEGREES, wait=True)#true
+  right_motor_2.spin_for(FORWARD, amount, DEGREES, wait=True) #true
 
 
 def rotateLeft(amount, speed):
@@ -66,11 +68,11 @@ def rotateLeft(amount, speed):
   left_motor.set_velocity(speed, PERCENT) 
   right_motor.set_velocity(speed, PERCENT) 
   left_motor_2.set_velocity(speed, PERCENT) 
-  right_motor_2.set_velocity(speed, PERCENT) 
+  right_motor_2.set_velocity(speed, PERCENT)
   
   #  do not move right_motor
   left_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees  * -1, DEGREES, False)
-
+  left_motor_2.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees * -1, DEGREES, False)
 
 def rotateRight(amount, speed):
   left_motor.set_velocity(speed, PERCENT) 
@@ -80,7 +82,7 @@ def rotateRight(amount, speed):
   
   #  do not move left_motor
   right_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees * -1, DEGREES, False) 
-
+  right_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees * -1, DEGREES, False)
 
 def turnLeft(amount, speed):
   brain.screen.print("\n Running auton.. Currently on function rotate with args " + amount.str() + speed.str())
@@ -90,31 +92,48 @@ def turnLeft(amount, speed):
   right_motor_2.set_velocity(speed, PERCENT) 
   
   #  do not move left_motor
+  right_motor.set_velocity(speed, PERCENT) 
   right_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees, DEGREES, False) 
 
 def turnRight(amount, speed):
   brain.screen.print("\n Running auton.. Currently on function rotate with args " + amount.str() + speed.str())
   left_motor.set_velocity(speed, PERCENT) 
   right_motor.set_velocity(speed, PERCENT) 
+  right_motor.set_velocity(speed, PERCENT) 
   left_motor_2.set_velocity(speed, PERCENT) 
   right_motor_2.set_velocity(speed, PERCENT)
   #  do not move right_motor
   left_motor.spin_for(FORWARD, amount / 360 * turnCirc * inches2Degrees, DEGREES, False) 
+# GitHub test
+
+
 
 # Begin project code
 
 def pre_auton():
-    brain.screen.print("Hello!")
+    brain.screen.print("Hello")
+
+
+
 def autonomous():
-
-  driveDist(11, 40)
-  rotateRight(180, 70)
-  brain.screen.print("Skibidi")
   clamp.set(extended)
-  intake.spin_for(FORWARD, 5, TURNS, 100, RPM)
+  driveDist(-10, 50)
   clamp.set(retracted)
+  intake.spin_for(FORWARD, 5, TURNS, 100, RPM)
+#4.5 rotations
 
-
+# skills auton code
+#def skills_autonomous():
+  #print("SKILLS AUTONOMOUS MODE")
+  #clamp.set(extended)
+  #driveDist(1.5, 70)
+  #rotateRight(90, 50)
+  #driveDist(-3, 70)
+  #clamp.set(retracted)
+  #rotateRight(180, 50)
+  #intake.spin_for(FORWARD, 7, TURNS, 100, RPM)
+  #driveDist(2.0625, 70)
+  #driveDist(0.6875, 70)
 # Main Controller loop to set motors to controller axis postiions
 def user_control():
     # Basic configuration
@@ -127,21 +146,22 @@ def user_control():
     lmotorvel = 0
     rmotorvel = 0
     arcade = True
+    clamp.set(False)
     brain.screen.clear_screen()
-    brain.screen.print("Please do not pet the robot \n boop beep.")
+    brain.screen.print("USER CONTROL")
 
     while True:
 
-        if arcade == False:
-          # Tank drive is "Sigma", as the kids say.
-          lmotorvel = controller_1.axis3.position() / 1.5
-          rmotorvel = controller_1.axis2.position() / 1.5
-          left_motor.set_velocity(lmotorvel, PERCENT)
-          left_motor_2.set_velocity(lmotorvel, PERCENT)
-          right_motor.set_velocity(rmotorvel, PERCENT)
-          right_motor_2.set_velocity(rmotorvel, PERCENT)
-        else:
-          # Arcade drive is "Cringe", as the kids say.
+        if arcade == True:
+          # Tank drive is "Cringe", as the kids say.
+#          lmotorvel = controller_1.axis3.position() / 1.5
+#          rmotorvel = controller_1.axis2.position() / 1.5
+#          left_motor.set_velocity(lmotorvel, PERCENT)
+#          left_motor_2.set_velocity(lmotorvel, PERCENT)
+#          right_motor.set_velocity(rmotorvel, PERCENT)
+ #         right_motor_2.set_velocity(rmotorvel, PERCENT)
+#       else:
+          # Arcade drive is "Sigma", as the kids say.
           lmotorvel = (controller_1.axis3.position() + controller_1.axis4.position())
           rmotorvel = (controller_1.axis3.position() - controller_1.axis4.position())
           left_motor.set_velocity(lmotorvel, PERCENT)
@@ -151,39 +171,48 @@ def user_control():
 
         # Run intake (forward)
         if controller_1.buttonA.pressing():
-            intake.set_velocity(75, RPM)
-            in2.set_velocity(90, RPM)
+            intake.set_velocity(-105, RPM)
+            in2.set_velocity(-110, RPM)
         # Extake????
         elif controller_1.buttonB.pressing():
-            intake.set_velocity(-75, RPM)
-            in2.set_velocity(-90, RPM)
-        # Cease
+            intake.set_velocity(90, RPM)
+            in2.set_velocity(200, RPM)
+        # Cease0
         else:
            intake.set_velocity(0, RPM)
            in2.set_velocity(0, RPM)
 
         # Mobilegoal clamp
         if controller_1.buttonX.pressing():
-       #   if clamp.value:
-          clamp.set(retracted)
-        else:
-          clamp.set(extended)
+           if clampbutton == 0:
+            clampbutton = 1
+            if clamp.value() == 0:
+              brain.screen.clear_line(1)
+              brain.screen.set_cursor(1,1)
+              brain.screen.print("Clamp = true")
+              clamp.set(True)
+            elif clamp.value() == 1:
+              brain.screen.clear_line(1)
+              brain.screen.set_cursor(1,1)
+              brain.screen.print("Clamp = false")
+              clamp.set(False)
+        else: 
+          clampbutton = 0
+        #corner sweeper
+ #       if controller_1.buttonR1.pressing():                                                 
+ #           if corner_extend == 0:
+ #             corner_extend = 1
+  #            if corner_sweeper.value() == 0:
+  #              corner_sweeper.set(True)
+   #           elif corner_sweeper.value() == 1:
+   #             corner_sweeper.set(False)
+   #    else:
+  #        corner_extend = 0
         # Activate or deactivate the garbage drive mode
-        if controller_1.buttonL1.pressing():
-          if arcade:
-            arcade = False
-          else:
-            arcade = True
-                   
-
-
-
         brain.screen.print_at("4886A", x=50, y=50)
         brain.screen.print_at(str(lmotorvel) + ", " + str(rmotorvel), x=50, y=85)
         
-
-        
-        wait(5, MSEC)
+        wait(20, MSEC)
 
 
 
