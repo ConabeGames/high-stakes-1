@@ -58,8 +58,8 @@ def driveDist(amount, speed):
   right_motor_2.set_velocity(speed, PERCENT) 
   amount *= inches2Degrees
   left_motor.spin_for(FORWARD, amount, DEGREES, wait=False) #false
-  right_motor.spin_for(FORWARD, amount, DEGREES, wait=False) #false
   left_motor_2.spin_for(FORWARD, amount, DEGREES, wait=True)#true
+  right_motor.spin_for(FORWARD, amount, DEGREES, wait=False) #false
   right_motor_2.spin_for(FORWARD, amount, DEGREES, wait=True) #true
 
 
@@ -116,10 +116,18 @@ def pre_auton():
 
 
 def autonomous():
-  clamp.set(extended)
-  driveDist(-10, 50)
   clamp.set(retracted)
-  intake.spin_for(FORWARD, 5, TURNS, 100, RPM)
+  driveDist(-10, 33)
+  left_motor.stop()
+  left_motor_2.stop()
+  right_motor.stop()
+  right_motor_2.stop()
+  clamp.set(extended)
+  intake.set_velocity(-100, RPM)
+  in2.set_velocity(-100, RPM)
+  intake.spin_for(REVERSE, 15, TURNS, wait=False)
+  in2.spin_for(REVERSE, 15, TURNS, wait=False)
+
 #4.5 rotations
 
 # skills auton code
@@ -146,7 +154,7 @@ def user_control():
     lmotorvel = 0
     rmotorvel = 0
     arcade = True
-    clamp.set(False)
+
     brain.screen.clear_screen()
     brain.screen.print("USER CONTROL")
 
