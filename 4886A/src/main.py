@@ -152,18 +152,18 @@ def autonomous():
     clamp.set(extended)
     in2.set_velocity(100)
     intake.set_velocity(100)
-    intake.spin_for(REVERSE, 3, TURNS, wait=False)
-    in2.spin_for(REVERSE, 5, TURNS, wait=False)
+    intake.spin_for(REVERSE, 10, TURNS, wait=False)
+    in2.spin_for(REVERSE, 10, TURNS, wait=False)
     print("YES, THIS CODE IS WORKING")
-
     print("YES, THIS CODE IS WORKING")
-    driveDist(3, 25)
-    # rotateRight(15, 20)
-    # rotateRight(3, 25)
+    rotateLeft(20, 30)
+    # rotateRight(17, 30)
+    # for + side
+    driveDist(5, 25)
+    intake.spin_for(REVERSE, 10, TURNS, wait=False)
+    in2.spin_for(REVERSE, 10, TURNS, wait=False)
 
     # 4.5 rotations
-
-    # this is in a different program. this is just a backup.
     # skills auton code
 
 
