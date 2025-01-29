@@ -32,7 +32,6 @@ right_motor_2 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False)  # type: igno
 intake = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)  # type: ignore #18 to 1
 in2 = Motor(Ports.PORT13, GearSetting.RATIO_18_1, True)  # type: ignore
 clamp = DigitalOut(brain.three_wire_port.a)  # type: ignore
-# corner_sweeper = DigitalOut(brain.three_wire_port.b)
 # Constants
 
 PI = 3.14159265
@@ -47,6 +46,7 @@ inches2Degrees = (360 / wheelCirc) * (wheelGearT / motorGearT)
 extended = True
 retracted = False
 clampbutton = 00
+corner_extend = 1
 
 # Auton steps
 
@@ -145,11 +145,17 @@ def pre_auton():
 def autonomous():
     clamp.set(retracted)
     driveDist(-10, 35)
+    left_motor.stop()
+    left_motor_2.stop()
+    right_motor.stop()
+    right_motor_2.stop()
     clamp.set(extended)
     in2.set_velocity(100)
     intake.set_velocity(100)
     intake.spin_for(REVERSE, 10, TURNS, wait=False)
     in2.spin_for(REVERSE, 10, TURNS, wait=False)
+    print("YES, THIS CODE IS WORKING")
+    print("YES, THIS CODE IS WORKING")
     rotateLeft(20, 30)
     # rotateRight(17, 30)
     # for + side
@@ -158,13 +164,7 @@ def autonomous():
     in2.spin_for(REVERSE, 10, TURNS, wait=False)
 
     # 4.5 rotations
-    # skills auton code        # if controller_1.buttonR1.pressing():
-    #     if corner_extend == 0:
-    #         corner_extend = 1
-    #         if corner_sweeper.value() == 0:
-    #             corner_sweeper.set(True)
-    #         elif clamp.value() == 1:
-    #            corner_sweeper.set(False)
+    # skills auton code
 
 
 def skills():
@@ -194,11 +194,6 @@ def skills():
     driveDist(-15, 25)
     rotateLeft(20, 25)
     clamp.set(extended)
-
-
-# 17 is 90 degrees
-
-# Main Controller loop to set motors to controller axis postiions
 
 
 def user_control():
@@ -265,52 +260,18 @@ def user_control():
                     brain.screen.print("Clamp = false")
                     clamp.set(False)
         else:
-            clampbutton = 0
-            # if controller_1.buttonR1.pressing():
-        #     if corner_extend == 0:
-        #         corner_extend = 1
-        #         if corner_sweeper.value() == 0:
-        #             corner_sweeper.set(True)
-        #         elif clamp.value() == 1:
-        #            corner_sweeper.set(False)        # if controller_1.buttonR1.pressing():
-        #     if corner_extend == 0:
-        #         corner_extend = 1
-        #         if corner_sweeper.value() == 0:
-        #             corner_sweeper.set(True)
-        #         elif clamp.value() == 1:
-        #            corner_sweeper.set(False)        # if controller_1.buttonR1.pressing():
-        #     if corner_extend == 0:
-        #         corner_extend = 1
-        #         if corner_sweeper.value() == 0:
-        #             corner_sweeper.set(True)
-        #         elif clamp.value() == 1:
-        #            corner_sweeper.set(False)        # if controller_1.buttonR1.pressing():
-        #     if corner_extend == 0:
-        #         corner_extend = 1
-        #         if corner_sweeper.value() == 0:
-        #             corner_sweeper.set(True)
-        #         elif clamp.value() == 1:
-        #            corner_sweeper.set(False)    # corner sweeper
-        # if controller_1.buttonR1.pressing():
-        #     if corner_extend == 0:
-        #         corner_extend = 1
-        #         if corner_sweeper.value() == 0:
-        #             corner_sweeper.set(True)
-        #         elif clamp.value() == 1:
-        #            corner_sweeper.set(False)
-        #     corner_extend = 0
+            clampbutton = 1
         # Activate or deactivate the garbage drive mode
         brain.screen.print_at("4886A", x=50, y=50)
         brain.screen.print_at(str(lmotorvel) + ", " + str(rmotorvel), x=50, y=85)
-        # if t.time(SECONDS) == 95.0:
-        # controller_1.screen.clear_screen
-        # controller_1.screen.print("GET OUT OF CORNERS")
-        # if t.time(SECONDS) >= 95.0:
-        # controller_1.rumble("....")
-        # if t.time(SECONDS) >= 98.0:
-        # controller_1.screen.clear_screen
-        # controller_1.screen.print("17 SECONDS LEFT")
-        # controller_1.rumble("----")
+        if t.time(SECONDS) == 95.0:
+            controller_1.rumble("....")
+            controller_1.screen.clear_screen()
+            controller_1.screen.print("GET OUT OF CORNERS")
+        if t.time(SECONDS) == 98.0:
+            controller_1.screen.clear_screen()
+            controller_1.screen.print("17 SECONDS LEFT")
+            controller_1.rumble("----")
 
         wait(10, MSEC)
 
